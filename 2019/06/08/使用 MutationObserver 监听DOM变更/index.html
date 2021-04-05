@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="安昙">
+
+
+
+
+
+<title>使用 MutationObserver 监听DOM变更 | 安昙的博客</title>
+
+
+
+    <link rel="icon" href="/antan-blog/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/antan-blog/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/antan-blog/js/script.js"></script>
+    
+    <script src="/antan-blog/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+<body>
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/antan-blog/">Home</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/antan-blog/archives">Posts</a>
+                
+                    <a class="menu-item" href="/antan-blog/category">Categories</a>
+                
+                    <a class="menu-item" href="/antan-blog/tag">Tags</a>
+                
+                    <a class="menu-item" href="/antan-blog/about">About</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/antan-blog/">Home</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/antan-blog/archives">Posts</a>
+                
+                    <a class="menu-item" href="/antan-blog/category">Categories</a>
+                
+                    <a class="menu-item" href="/antan-blog/tag">Tags</a>
+                
+                    <a class="menu-item" href="/antan-blog/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+        <div class="main">
+            <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    document.ready(
+        function () {
+            tocbot.init({
+                tocSelector: '.tocbot-list',
+                contentSelector: '.post-content',
+                headingSelector: 'h1, h2, h3, h4, h5',
+                collapseDepth: 1,
+                orderedList: false,
+                scrollSmooth: true,
+            })
+        }
+    )
+
+    function expand_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 6,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "collapse_toc()");
+        b.innerHTML = "Collapse all"
+    }
+
+    function collapse_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 1,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "expand_toc()");
+        b.innerHTML = "Expand all"
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">使用 MutationObserver 监听DOM变更</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">安昙</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">六月 8, 2019&nbsp;&nbsp;17:10:20</a>
+                        </span>
+                    
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <blockquote>
+<p>今天在写 tampermonkey 脚本需要监听DOM的变更，想到了之前写的事件循环中的微任务 MutationObserver 就是用来监听DOM变更的，然后学习了一下如何使用并写了这篇博客作为记录。</p>
+</blockquote>
+<h1 id="简述"><a href="#简述" class="headerlink" title="简述"></a>简述</h1><p>MutationObserver 接口可以监听DOM树的变更。</p>
+<h2 id="基础示例"><a href="#基础示例" class="headerlink" title="基础示例"></a>基础示例</h2><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 选择需要观察变动的节点</span></span><br><span class="line"><span class="keyword">const</span> targetNode = <span class="built_in">document</span>.getElementById(<span class="string">&#x27;some-id&#x27;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 观察器的配置（需要观察什么变动）</span></span><br><span class="line"><span class="keyword">const</span> config = &#123; <span class="attr">attributes</span>: <span class="literal">true</span>, <span class="attr">childList</span>: <span class="literal">true</span>, <span class="attr">subtree</span>: <span class="literal">true</span> &#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 当观察到变动时执行的回调函数</span></span><br><span class="line"><span class="keyword">const</span> callback = <span class="function"><span class="keyword">function</span>(<span class="params">mutationsList, observer</span>) </span>&#123;</span><br><span class="line">    <span class="comment">// Use traditional &#x27;for loops&#x27; for IE 11</span></span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">let</span> mutation <span class="keyword">of</span> mutationsList) &#123;</span><br><span class="line">        <span class="keyword">if</span> (mutation.type === <span class="string">&#x27;childList&#x27;</span>) &#123;</span><br><span class="line">            <span class="built_in">console</span>.log(<span class="string">&#x27;A child node has been added or removed.&#x27;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span> (mutation.type === <span class="string">&#x27;attributes&#x27;</span>) &#123;</span><br><span class="line">            <span class="built_in">console</span>.log(<span class="string">&#x27;The &#x27;</span> + mutation.attributeName + <span class="string">&#x27; attribute was modified.&#x27;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 创建一个观察器实例并传入回调函数</span></span><br><span class="line"><span class="keyword">const</span> observer = <span class="keyword">new</span> MutationObserver(callback);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 以上述配置开始观察目标节点</span></span><br><span class="line">observer.observe(targetNode, config);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 之后，可停止观察</span></span><br><span class="line">observer.disconnect();</span><br></pre></td></tr></table></figure>
+
+<h1 id="构造函数"><a href="#构造函数" class="headerlink" title="构造函数"></a>构造函数</h1><p>使用<code>MutationObserver</code>构造函数，创建一个观察器实例，需要传递一个函数作为DOM改变后触发的回调函数。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> observer = <span class="keyword">new</span> MutationObserver(callback);</span><br></pre></td></tr></table></figure>
+
+<h2 id="callback"><a href="#callback" class="headerlink" title="callback"></a>callback</h2><p>当指定的DOM元素变动时会触发该回调函数。</p>
+<p>callback有2个参数，第一个是监听的DOM改变后返回的 mutationLIst（描述DOM节点的数组），第二个是创建的观察器实例对象。<br>示例如下：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">callBack</span>(<span class="params">mutationList, observer</span>)</span>&#123;&#125;</span><br></pre></td></tr></table></figure>
+
+
+<h1 id="实例方法"><a href="#实例方法" class="headerlink" title="实例方法"></a>实例方法</h1><p><code>MutationObserver</code>构造函数实例化后创建的观察器实例，拥有以下实例方法：</p>
+<h2 id="observe-targetNode-configs"><a href="#observe-targetNode-configs" class="headerlink" title="observe(targetNode, configs)"></a>observe(targetNode, configs)</h2><ul>
+<li>targetNode  指定监听的DOM节点</li>
+<li>configs  配置项，描述了DOM的某些变化才能被监听并触发callBack<ul>
+<li>attributeFilter ?: <string>  监听DOM节点指定属性的变更，如果没有设置该属性则默认为所有属性</li>
+<li>attributeOldValue ?: boolean  当值为true时，记录DOM节点属性变更之前的值</li>
+<li>attributes ?: boolean  值为true则监听DOM节点的属性变更，默认为false</li>
+<li>characterData ?: boolean  值为true则监听DOM节点包含的字符变化，默认为false</li>
+<li>characterDataOldValue ?: boolean 值为true则记录DOM节点字符变化之前的值</li>
+<li>childList ?:boolean 值为true则监听目标节点添加或删除子节点</li>
+<li>subtree ?: boolean 当值为true时，将监听的范围扩展为以目标节点为根节点的整个DOM树，即目标节点及其子孙节点</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p>注意，在调用<code>observe</code>时，<code>attributes</code>、<code>characterData</code>、<code>childList</code>必须有一个为true。<br>TODO 插入例子<br>TODO 替换为table</p>
+</blockquote>
+<h2 id="disconnect"><a href="#disconnect" class="headerlink" title="disconnect()"></a>disconnect()</h2><p>停止观察器对DOM节点的监听，可以调用<code>observe</code>来重启监听。</p>
+<p>如果被观察的元素被从DOM中移除，然后被浏览器的垃圾回收机制释放，此MutationObserver将同样被删除。</p>
+<h2 id="takeRecords"><a href="#takeRecords" class="headerlink" title="takeRecords()"></a>takeRecords()</h2><p>返回已检测但是尚未被观察器的回调函数处理的<code>MutationRecord</code>对象列表，使变更队列保持为空。<br>一般用在断开观察器之前，获取所有的变更记录。</p>
+<h1 id="MutationRecord-对象"><a href="#MutationRecord-对象" class="headerlink" title="MutationRecord 对象"></a>MutationRecord 对象</h1><p>当监听的DOM发生变化时，每一次变化都会生成一组<code>MutationRecord</code>对象。</p>
+<ul>
+<li>type  按照DOM的实际变化，值为<code>attributes</code>（属性变化）,值为<code>characterData</code>（字符变化）,值为<code>childList</code>（子节点变化） </li>
+<li>target  实际变化的节点</li>
+<li>addedNodes  返回添加的节点列表</li>
+<li>removedNodes  返回删除的节点列表</li>
+<li>previousSibling  返回添加或删除之前的兄弟节点，没有则为null</li>
+<li>nextSibling  返回添加或删除之后的兄弟节点，没有则为null</li>
+<li>attributeName  返回被修改的属性名，没有则为null</li>
+<li>oldValue  返回改变之前的属性值（attributeOldValueweitrue）或字符数据（characterDataOldValue为true）</li>
+</ul>
+<h1 id="应用场景和示例"><a href="#应用场景和示例" class="headerlink" title="应用场景和示例"></a>应用场景和示例</h1><p>监听元素和DOM节点的变化，可以参考下面示例</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">queryNode</span>(<span class="params">value</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="built_in">document</span>.querySelector.call(<span class="built_in">document</span>, value);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// * 更新attribute</span></span><br><span class="line">queryNode(<span class="string">&quot;.btn-1&quot;</span>).addEventListener(<span class="string">&quot;click&quot;</span>, <span class="function">() =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">const</span> displayVal = queryNode(<span class="string">&quot;.child-1&quot;</span>).style.display;</span><br><span class="line"></span><br><span class="line">  queryNode(<span class="string">&quot;.child-1&quot;</span>).style.display =</span><br><span class="line">    displayVal === <span class="string">&quot;none&quot;</span> ? <span class="string">&quot;block&quot;</span> : <span class="string">&quot;none&quot;</span>;</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="comment">// * 更新DOM</span></span><br><span class="line">queryNode(<span class="string">&quot;.btn-2&quot;</span>).addEventListener(<span class="string">&quot;click&quot;</span>, <span class="function">() =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">const</span> parentNode = queryNode(<span class="string">&quot;.parent-2&quot;</span>);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">const</span> hasChild = !!parentNode.firstChild;</span><br><span class="line">  <span class="keyword">if</span> (hasChild) &#123;</span><br><span class="line">    parentNode.removeChild(queryNode(<span class="string">&quot;.child-2&quot;</span>));</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    parentNode.innerHTML = <span class="string">&#x27;&lt;div class=&quot;child-2&quot;&gt;测试 dom节点&lt;/div&gt;&#x27;</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">callback</span>(<span class="params">mutationRecords, mutationObserver</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">let</span> mutationRecord <span class="keyword">of</span> mutationRecords) &#123;</span><br><span class="line">    <span class="keyword">if</span> (mutationRecord.type === <span class="string">&quot;attributes&quot;</span>) &#123;</span><br><span class="line">      <span class="built_in">console</span>.log(<span class="string">&quot;更新attributes产生的mutationRecord&quot;</span>, mutationRecord);</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (mutationRecord.type === <span class="string">&quot;childList&quot;</span>) &#123;</span><br><span class="line">      <span class="built_in">console</span>.log(<span class="string">&quot;更新DOM产生的mutationRecord&quot;</span>, mutationRecord);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> observer = <span class="keyword">new</span> MutationObserver(callback);</span><br><span class="line"></span><br><span class="line">observer.observe(queryNode(<span class="string">&quot;#root&quot;</span>), &#123;</span><br><span class="line">  attributes: <span class="literal">true</span>,</span><br><span class="line">  childList: <span class="literal">true</span>,</span><br><span class="line">  subtree: <span class="literal">true</span>,</span><br><span class="line">  attributeOldValue: <span class="literal">true</span>,</span><br><span class="line">  characterDataOldValue: <span class="literal">true</span></span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<p><a target="_blank" rel="noopener" href="https://codesandbox.io/s/mutationobserver-demo-v2lwz?file=/src/index.js">code sandbox 示例</a></p>
+<h1 id="扩展"><a href="#扩展" class="headerlink" title="扩展"></a>扩展</h1><h2 id="mutation-observer-调用时机"><a href="#mutation-observer-调用时机" class="headerlink" title="mutation observer 调用时机"></a>mutation observer 调用时机</h2><p>mutation observer 调用属于微任务，在改变监听DOM节点时会将callback添加至微任务队列，执行顺序见下图</p>
+<p><img src="http://zqfile.banzheshenghuo.com/20210405175823.png" alt="执行顺序"></p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a target="_blank" rel="noopener" href="https://developer.mozilla.org/zh-CN/docs/Web/API/MutationObserver">MDN MutationObserver</a><br><a target="_blank" rel="noopener" href="https://javascript.ruanyifeng.com/dom/mutationobserver.html">《JavaScript 标准参考教程（alpha）》阮一峰</a></p>
+
+        </div>
+
+        <!-- 
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>安昙</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="https://banzheshenghuo.github.io/antan-blog/2019/06/08/%E4%BD%BF%E7%94%A8%20MutationObserver%20%E7%9B%91%E5%90%ACDOM%E5%8F%98%E6%9B%B4/">https://banzheshenghuo.github.io/antan-blog/2019/06/08/%E4%BD%BF%E7%94%A8%20MutationObserver%20%E7%9B%91%E5%90%ACDOM%E5%8F%98%E6%9B%B4/</a></span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>License:</span>
+                        <span>Copyright (c) 2019 <a target="_blank" rel="noopener" href="http://creativecommons.org/licenses/by-nc/4.0/">CC-BY-NC-4.0</a> LICENSE</span>
+                    </p>
+                
+                
+                     <p class="copyright-item">
+                         <span>Slogan:</span>
+                         <span>Do you believe in <strong>DESTINY</strong>?</span>
+                     </p>
+                
+
+            </section>
+         -->
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/antan-blog/source/tag/Web-API/"># Web API</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/antan-blog/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+                <a class="prev" rel="prev" href="/antan-blog/2021/03/01/hello-world/">hexo 快速上手</a>
+            
+            
+            <a class="next" rel="next" href="/antan-blog/2018/10/22/react-native-%E4%B8%AD%E6%96%87%E8%BE%93%E5%85%A5%E6%B3%95%E5%86%B2%E7%AA%81/">react-native 中文输入法冲突</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+        </div>
+        <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© 安昙 | Powered by Hexo & Chic</span>
+    </div>
+</footer>
+
+    </div>
+</body>
+</html>
