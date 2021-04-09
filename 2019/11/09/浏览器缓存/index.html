@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="安昙">
+
+
+
+
+
+<title>浏览器缓存 | 安昙的博客</title>
+
+
+
+    <link rel="icon" href="/antan-blog/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/antan-blog/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/antan-blog/js/script.js"></script>
+    
+    <script src="/antan-blog/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+<body>
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/antan-blog/">Home</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/antan-blog/archives">Posts</a>
+                
+                    <a class="menu-item" href="/antan-blog/category">Categories</a>
+                
+                    <a class="menu-item" href="/antan-blog/tag">Tags</a>
+                
+                    <a class="menu-item" href="/antan-blog/about">About</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/antan-blog/">Home</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/antan-blog/archives">Posts</a>
+                
+                    <a class="menu-item" href="/antan-blog/category">Categories</a>
+                
+                    <a class="menu-item" href="/antan-blog/tag">Tags</a>
+                
+                    <a class="menu-item" href="/antan-blog/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+        <div class="main">
+            <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    document.ready(
+        function () {
+            tocbot.init({
+                tocSelector: '.tocbot-list',
+                contentSelector: '.post-content',
+                headingSelector: 'h1, h2, h3, h4, h5',
+                collapseDepth: 1,
+                orderedList: false,
+                scrollSmooth: true,
+            })
+        }
+    )
+
+    function expand_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 6,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "collapse_toc()");
+        b.innerHTML = "Collapse all"
+    }
+
+    function collapse_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 1,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "expand_toc()");
+        b.innerHTML = "Expand all"
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">浏览器缓存</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">安昙</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">十一月 9, 2019&nbsp;&nbsp;20:56:26</a>
+                        </span>
+                    
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="浏览器缓存"><a href="#浏览器缓存" class="headerlink" title="浏览器缓存"></a>浏览器缓存</h1><h2 id="缓存方式"><a href="#缓存方式" class="headerlink" title="缓存方式"></a>缓存方式</h2><p>缓存分为强缓存和协商缓存。</p>
+<p>协商缓存需要发送请求，让服务器协商验证资源的新鲜度。<br>强缓存是在缓存时间内直接使用本地资源，不用发请求验证。</p>
+<h2 id="缓存查找策略"><a href="#缓存查找策略" class="headerlink" title="缓存查找策略"></a>缓存查找策略</h2><ol>
+<li>如果设置cache-control或expire且缓存未失效则直接返回浏览器本地副本，否则进入下一阶段</li>
+<li>如果cache-control和expire都没有设置，且有last-modified，则判断是否使用启发式缓存。</li>
+<li>如果设置协商缓存则发起请求并携带标识于服务器进行验证，如果资源未更新则返回304，已更新则状态码为200并返回最新资源。</li>
+</ol>
+<h2 id="协商缓存"><a href="#协商缓存" class="headerlink" title="协商缓存"></a>协商缓存</h2><p>发送网络请求，由last-modify和Etag控制，如果资源未更新，请求返回304，使用本地缓存资源。</p>
+<h3 id="Last-Modified和if-modify-since"><a href="#Last-Modified和if-modify-since" class="headerlink" title="Last-Modified和if-modify-since"></a>Last-Modified和if-modify-since</h3><p><strong>是什么？</strong> 文件最终修改的服务器时间。<br>response header中有last-modified属性，值为一个绝对时间<code>Last-Modified:Tue, 24 Feb 2009 08:01:04 GMT</code>，然后下次一请求url会在请求头加上if-modified-since，询问服务端在这个时间段后资源是否有修改，如果没有则返回304，从浏览器缓存中加载资源</p>
+<h3 id="Etag和if-none-match（优先级高于last-modified）"><a href="#Etag和if-none-match（优先级高于last-modified）" class="headerlink" title="Etag和if-none-match（优先级高于last-modified）"></a>Etag和if-none-match（优先级高于last-modified）</h3><p><code>Etag:“5d8c72a5edda8d6a:3239″</code><br><code>f-None-Match:“5d8c72a5edda8d6a:3239“</code><br><strong>是什么？</strong> 是资源文件的特定版本的标识符，<br><strong>实现</strong>具体实现没有特定的要求，可以是版本号、内容散列值、修改时间等。<br><strong>有了last-modified还有需要Etag？</strong></p>
+<ol>
+<li>有的时候文件会周期性变化，最后修改时间会变但他的内容不会变。如果使用last-modified就会是的缓存失效。</li>
+<li>某些文件修改很频繁，在1秒内多次修改，但是last-modified时间维度是s级别的。<br>response header中设置Etag，表明该资源的标识。当下次请求相同url时，request header会设置if-none-match值为上次返回的Etag值，如果没有变更说资源未更新，返回304，并从浏览器缓存中加载资源。</li>
+</ol>
+<h2 id="强缓存"><a href="#强缓存" class="headerlink" title="强缓存"></a>强缓存</h2><p>status code 200 from cache 强制缓存<br>这一层由expire/cache-control控制，expire适用于http1.0，cache-control适用于http1.1，如果设置了cache-control则忽略expire。</p>
+<blockquote>
+<p>cache-control设置的max-age是相对时间，从发起请求的时间算起。expire是绝对时间。<br>所以如果时区不同，会导致缓存失效。</p>
+</blockquote>
+<h3 id="cache-control"><a href="#cache-control" class="headerlink" title="cache-control"></a>cache-control</h3><ul>
+<li>private 客户端支持缓存</li>
+<li>public 客户端和服务端（代理服务器）都支持缓存</li>
+<li>max-age 缓存失效时间（second）从发起请求开始算</li>
+<li>no-cache 协商缓存的标识符，直接向<strong>源服务器</strong>请求，验证资源新鲜度</li>
+<li>no-store 不使用缓存<blockquote>
+<p>强缓存和协商缓存的界限？cache-control只有设置max-age才能强缓存吗？</p>
+</blockquote>
+</li>
+</ul>
+<h3 id="expires-过期时间"><a href="#expires-过期时间" class="headerlink" title="expires 过期时间"></a>expires 过期时间</h3><p>服务端设置的绝对时间，适用于http1.0，现在用的少了。</p>
+<h2 id="启发式缓存（Heuristic-freshness-checking）"><a href="#启发式缓存（Heuristic-freshness-checking）" class="headerlink" title="启发式缓存（Heuristic freshness checking）"></a><a target="_blank" rel="noopener" href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Caching#heuristic_freshness_checking">启发式缓存（Heuristic freshness checking）</a></h2><p>如果源服务器没有显示指定其他新鲜度校验（比如expire或cache-control）且有last-modified时，浏览器进行启发式新鲜度检查。<br>检查规则是用 Date + ( Date - last-Modified)/10指定缓存失效时间，在这个时间内会直接读取浏览器缓存副本。</p>
+<blockquote>
+<p>Date 是资源响应时的时间</p>
+</blockquote>
+<hr>
+<p><img src="http://zqfile.banzheshenghuo.com/20200824203957.png" alt="浏览器第二次请求流程图"></p>
+<h2 id="缓存位置"><a href="#缓存位置" class="headerlink" title="缓存位置"></a>缓存位置</h2><p>浏览器在内存或硬盘中开辟空间用于保存资源副本。<br>优先级：service worker &gt; memory cache &gt; disk cache &gt; push cache</p>
+<h3 id="from-memory"><a href="#from-memory" class="headerlink" title="from memory"></a>from memory</h3><p>从内存中获取资源，不进行网络请求，之前已经加载过，浏览器关闭后，内存资源会被清除。<br>一般还会在disk上保留一份副本。</p>
+<h3 id="from-disk"><a href="#from-disk" class="headerlink" title="from disk"></a>from disk</h3><p>从硬盘中获取资源，不进行网络请求，之间已经加载过，浏览器关闭后还能从缓存中获取资源</p>
+<h3 id="from-prefetch-cache"><a href="#from-prefetch-cache" class="headerlink" title="from prefetch cache"></a>from prefetch cache</h3><p>在 preload 或 prefetch 的资源加载时，两者也是均存储在 http cache，当资源加载完成后，如果资源是可以被缓存的，那么其被存储在 http cache 中等待后续使用；如果资源不可被缓存，那么其在被使用前均存储在 memory cache</p>
+<h3 id="资源最终储存位置"><a href="#资源最终储存位置" class="headerlink" title="资源最终储存位置"></a>资源最终储存位置</h3><p>一般来说是有浏览器调度控制，比如当memory资源不足时就会储存至disk。<br>就观察而言：</p>
+<ul>
+<li>大些的资源都是存放在disk</li>
+<li>像js一般都是储存在memory</li>
+<li>memory大小有限制的，浏览器会根据内置算法将有些资源转移至disk</li>
+</ul>
+<h1 id="相关内容"><a href="#相关内容" class="headerlink" title="相关内容"></a>相关内容</h1><h2 id="缓存相关标识符"><a href="#缓存相关标识符" class="headerlink" title="缓存相关标识符"></a>缓存相关标识符</h2><h3 id="响应报文头部字段-vary"><a href="#响应报文头部字段-vary" class="headerlink" title="响应报文头部字段 - vary"></a>响应报文头部字段 - vary</h3><p>vary是由服务端添加值<strong>响应报文信息头</strong>。<br>一般情况下用在客户端缓存机制和缓存服务器在做缓存操作时使用vary。</p>
+<p>出现源由：因为客户端支持编码格式和user-agent不同，源服务端返回特定格式的数据。</p>
+<p>但是如果用到缓存服务器缓存数据时，针对同一接口同一请求，缓存服务器需要判断客户端支持的编码格式和UA，这时vary就起到作用了。</p>
+<p>可以设置user-agent、accept-encoding，等作为区分缓存数据的依据。</p>
+<h2 id="HTTP请求的响应头部Vary的理解"><a href="#HTTP请求的响应头部Vary的理解" class="headerlink" title="HTTP请求的响应头部Vary的理解"></a><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_29405933/article/details/84315254">HTTP请求的响应头部Vary的理解</a></h2><h3 id="响应头-Date"><a href="#响应头-Date" class="headerlink" title="响应头 Date"></a>响应头 Date</h3><h2 id="记录响应报文发送的时间，用于启发式缓存，代理服务器缓存-研究？"><a href="#记录响应报文发送的时间，用于启发式缓存，代理服务器缓存-研究？" class="headerlink" title="记录响应报文发送的时间，用于启发式缓存，代理服务器缓存(研究？)"></a>记录响应报文发送的时间，用于启发式缓存，代理服务器缓存(研究？)</h2><h2 id="etag的实现"><a href="#etag的实现" class="headerlink" title="etag的实现"></a>etag的实现</h2><p>Etag仅仅是一个和文件相关的标记，没有规定内容是什么，或者用什么实现，比如版本号或者内容散列、<br>(apache默认使用filesize-mtime等来生成)</p>
+<h2 id="格式"><a href="#格式" class="headerlink" title="格式"></a>格式</h2><p>都是etag-value是字符串，可以直接使用etag-value，或者前面加上w/ 作为弱验证器</p>
+<h2 id="强弱验证器"><a href="#强弱验证器" class="headerlink" title="强弱验证器"></a><a target="_blank" rel="noopener" href="https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Conditional_requests#%E5%BC%BA%E9%AA%8C%E8%AF%81%E7%B1%BB%E5%9E%8B">强弱验证器</a></h2><ul>
+<li>强验证器 需要保证相比较的资源每一个字节都相同，确保数据在任何时候都没有缺损，但可能会牺牲性能为代价（像Etag可以使用MD5获取资源的散列值）</li>
+<li>弱验证器 一般是语义上的一致，不保证每个字节都相同，比如只对页面主要内容进行比较，其他的就算修改也不影响，复杂的地方需要会对页面元素的重要性进行排序。</li>
+</ul>
+<p>response header还是request header<br>减少服务器压力，提高客户端加载速度<br><a target="_blank" rel="noopener" href="https://www.cnblogs.com/flysnow-z/archive/2012/08/17/2644420.html">HTTP协议Etag详解</a></p>
+<h2 id="DNS缓存"><a href="#DNS缓存" class="headerlink" title="DNS缓存"></a>DNS缓存</h2><ol>
+<li>DNS查询浏览器自身DNS缓存，如果有则解析结束</li>
+<li>读取操作系统的host文件是存在映射关系，如果存在则解析结束</li>
+<li>读取本地DNS服务，如果存在映射关系，则解析结束</li>
+<li>如果本地DNS服务器没有找到，则想根服务器发起请求，请求递归查询</li>
+</ol>
+<h2 id="CDN缓存"><a href="#CDN缓存" class="headerlink" title="CDN缓存"></a>CDN缓存</h2><p>CDN会选择一个离用户最近的CDN边缘节点来响应用户请求<br>优点：</p>
+<ul>
+<li>解决跨地域和跨运营商的问题，访问延时大大降低</li>
+<li>大部分静态资源请求在CDN边缘节点完成，减轻源服务器压力<blockquote>
+<p>CDN缓存，也叫网关缓存、反向代理缓存。浏览器先向CDN网关发起WEB请求，网关服务器后面对应着一台或多台负载均衡源服务器，会根据它们的负载请求，动态地请求转发到合适的源服务器上。</p>
+</blockquote>
+</li>
+</ul>
+
+        </div>
+
+        <!-- 
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>安昙</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="https://banzheshenghuo.github.io/antan-blog/2019/11/09/%E6%B5%8F%E8%A7%88%E5%99%A8%E7%BC%93%E5%AD%98/">https://banzheshenghuo.github.io/antan-blog/2019/11/09/%E6%B5%8F%E8%A7%88%E5%99%A8%E7%BC%93%E5%AD%98/</a></span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>License:</span>
+                        <span>Copyright (c) 2019 <a target="_blank" rel="noopener" href="http://creativecommons.org/licenses/by-nc/4.0/">CC-BY-NC-4.0</a> LICENSE</span>
+                    </p>
+                
+                
+                     <p class="copyright-item">
+                         <span>Slogan:</span>
+                         <span>Do you believe in <strong>DESTINY</strong>?</span>
+                     </p>
+                
+
+            </section>
+         -->
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/antan-blog/source/tag/%E6%B5%8F%E8%A7%88%E5%99%A8/"># 浏览器</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/antan-blog/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+                <a class="prev" rel="prev" href="/antan-blog/2021/03/01/hello-world/">hexo 快速上手</a>
+            
+            
+            <a class="next" rel="next" href="/antan-blog/2019/06/08/%E4%BD%BF%E7%94%A8%20MutationObserver%20%E7%9B%91%E5%90%ACDOM%E5%8F%98%E6%9B%B4/">使用 MutationObserver 监听DOM变更</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+        </div>
+        <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© 安昙 | Powered by Hexo & Chic</span>
+    </div>
+</footer>
+
+    </div>
+</body>
+</html>
