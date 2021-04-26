@@ -40,7 +40,7 @@ console.log(obj) // { name: '程序猿', age:{child: 24} }
 嗯~~~不错，程序猿还没变成单身狗，纳尼child怎么变成24了，我怕是用了假的ES6吧
 查了查MDN，才发现自己对Object.assign的一点都不了解，就乱用，真是自己作死
 
-![warning for deep clone](http://zqfile.banzheshenghuo.com/20210402153607.png)
+![warning for deep clone](https://zqfile.banzheshenghuo.com/20210402153607.png)
 
 简单说就是如果拷贝的对象的属性值也是一个引用（对象），就只会把引用给拷贝过来。而且这货用的最多的地方不是浅拷贝而是将多个对象的属性合并到一个对象上
 

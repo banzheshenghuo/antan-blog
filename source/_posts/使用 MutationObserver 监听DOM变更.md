@@ -149,7 +149,7 @@ observer.observe(queryNode("#root"), {
 ## mutation observer 调用时机
 mutation observer 调用属于微任务，在改变监听DOM节点时会将callback添加至微任务队列，执行顺序见下图
 
-![执行顺序](http://zqfile.banzheshenghuo.com/20210405175823.png)
+![执行顺序](https://zqfile.banzheshenghuo.com/20210405175823.png)
 
 # 参考
 [MDN MutationObserver](https://developer.mozilla.org/zh-CN/docs/Web/API/MutationObserver)
