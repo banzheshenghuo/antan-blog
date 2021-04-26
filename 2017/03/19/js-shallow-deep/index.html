@@ -203,7 +203,7 @@
 <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> obj = &#123; <span class="attr">name</span>: <span class="string">&#x27;程序猿&#x27;</span>, <span class="attr">age</span>:&#123;<span class="attr">child</span>: <span class="number">12</span>&#125; &#125;</span><br><span class="line"><span class="keyword">let</span> copy = <span class="built_in">Object</span>.assign(&#123;&#125;, obj);</span><br><span class="line">copy.name = <span class="string">&#x27;单身狗&#x27;</span></span><br><span class="line">copy.age.child = <span class="number">24</span></span><br><span class="line"><span class="built_in">console</span>.log(obj) <span class="comment">// &#123; name: &#x27;程序猿&#x27;, age:&#123;child: 24&#125; &#125;</span></span><br></pre></td></tr></table></figure>
 
 <p>嗯~~~不错，程序猿还没变成单身狗，纳尼child怎么变成24了，我怕是用了假的ES6吧<br>查了查MDN，才发现自己对Object.assign的一点都不了解，就乱用，真是自己作死</p>
-<p><img src="http://zqfile.banzheshenghuo.com/20210402153607.png" alt="warning for deep clone"></p>
+<p><img src="https://zqfile.banzheshenghuo.com/20210402153607.png" alt="warning for deep clone"></p>
 <p>简单说就是如果拷贝的对象的属性值也是一个引用（对象），就只会把引用给拷贝过来。而且这货用的最多的地方不是浅拷贝而是将多个对象的属性合并到一个对象上</p>
 <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">Object</span>.assign( target, obj1, obj2 )</span><br></pre></td></tr></table></figure>
 

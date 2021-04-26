@@ -12,7 +12,7 @@
 
 
 
-<title>hexo 快速上手 | 安昙的博客</title>
+<title>阿里云免费SSL证书申请和配置七牛云HTTPS | 安昙的博客</title>
 
 
 
@@ -173,7 +173,7 @@
     
     <article class="post-wrap">
         <header class="post-header">
-            <h1 class="post-title">hexo 快速上手</h1>
+            <h1 class="post-title">阿里云免费SSL证书申请和配置七牛云HTTPS</h1>
             
                 <div class="post-meta">
                     
@@ -182,7 +182,7 @@
 
                     
                         <span class="post-time">
-                        Date: <a href="#">三月 1, 2021&nbsp;&nbsp;11:14:17</a>
+                        Date: <a href="#">二月 26, 2021&nbsp;&nbsp;22:26:32</a>
                         </span>
                     
                     
@@ -191,19 +191,13 @@
         </header>
 
         <div class="post-content">
-            <p>Welcome to <a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a target="_blank" rel="noopener" href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a target="_blank" rel="noopener" href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a target="_blank" rel="noopener" href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/writing.html">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/server.html">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/generating.html">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
+            <h1 id="阿里云免费SSL证书"><a href="#阿里云免费SSL证书" class="headerlink" title="阿里云免费SSL证书"></a>阿里云免费SSL证书</h1><h2 id="选购证书"><a href="#选购证书" class="headerlink" title="选购证书"></a>选购证书</h2><p>进入<a target="_blank" rel="noopener" href="https://www.aliyun.com/product/security/markets/aliyun/product/cas?spm=5176.12825654.h2v3icoap.635.e9392c4aHaG07V">SSL证书选购页面</a>，点击选购证书，然后证书类型选择DV单域名证书完成选购。<br><img src="https://zqfile.banzheshenghuo.com/20210426220512.png" alt="选购证书"></p>
+<h2 id="申请证书"><a href="#申请证书" class="headerlink" title="申请证书"></a>申请证书</h2><p>进入<a target="_blank" rel="noopener" href="https://yundun.console.aliyun.com/?spm=a2c6h.12873639.0.0.6a3e45f8I5eLYa&p=cas#/overview/">阿里云SSL控制台</a>，选择之前的免费SSL。<br><img src="https://zqfile.banzheshenghuo.com/20210426220729.png" alt="证书申请"></p>
+<p>然后在证书列表找到刚创建的证书，点击证书申请，按照提示填写域名、邮箱等信息。</p>
+<p>阿里云提供多版本SSL证书，如Tomcat、Apache、Nginx和IIS等。</p>
+<h1 id="七牛云配置HTTPS"><a href="#七牛云配置HTTPS" class="headerlink" title="七牛云配置HTTPS"></a>七牛云配置HTTPS</h1><p>进入<a target="_blank" rel="noopener" href="https://portal.qiniu.com/cdn/domain">域名管理页面</a>，点击需要配置的域名，选择HTTPS配置。<br><img src="https://zqfile.banzheshenghuo.com/20210426210215.png" alt="七牛云"></p>
+<h2 id="本地上传证书"><a href="#本地上传证书" class="headerlink" title="本地上传证书"></a>本地上传证书</h2><p>选择本地上传。然后将之前下载的阿里云SSL证书压缩包解压，将以<code>*.public.crt</code>和 <code>*.key</code>后缀的文件使用文本编辑器或IDE打开，将<strong>全部内容</strong>复制粘贴至证书内容和证书秘钥中。<br><img src="https://zqfile.banzheshenghuo.com/20210426210403.png" alt="添加证书"><br>然后等待几分钟配置生效。</p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a target="_blank" rel="noopener" href="https://developer.aliyun.com/article/766913">2020阿里云免费SSL证书申请方法流程</a></p>
 
         </div>
 
@@ -218,7 +212,7 @@
                 
                     <p class="copyright-item">
                         <span>Permalink:</span>
-                        <span><a href="https://banzheshenghuo.github.io/antan-blog/2021/03/01/hello-world/">https://banzheshenghuo.github.io/antan-blog/2021/03/01/hello-world/</a></span>
+                        <span><a href="https://banzheshenghuo.github.io/antan-blog/2021/02/26/%E9%98%BF%E9%87%8C%E4%BA%91%E5%85%8D%E8%B4%B9SSL%E8%AF%81%E4%B9%A6%E7%94%B3%E8%AF%B7%E5%92%8C%E9%85%8D%E7%BD%AE%E4%B8%83%E7%89%9B%E4%BA%91HTTPS/">https://banzheshenghuo.github.io/antan-blog/2021/02/26/%E9%98%BF%E9%87%8C%E4%BA%91%E5%85%8D%E8%B4%B9SSL%E8%AF%81%E4%B9%A6%E7%94%B3%E8%AF%B7%E5%92%8C%E9%85%8D%E7%BD%AE%E4%B8%83%E7%89%9B%E4%BA%91HTTPS/</a></span>
                     </p>
                 
                 
@@ -241,10 +235,6 @@
                 <span>Tag(s):</span>
                 <span class="tag">
                     
-                    
-                        <a href="/antan-blog/source/tag/hexo/"># hexo</a>
-                    
-                        
                 </span>
             </div>
             <div>
@@ -255,8 +245,10 @@
         </section>
         <section class="post-nav">
             
+                <a class="prev" rel="prev" href="/antan-blog/2021/03/01/hello-world/">hexo 快速上手</a>
             
-            <a class="next" rel="next" href="/antan-blog/2021/02/26/%E9%98%BF%E9%87%8C%E4%BA%91%E5%85%8D%E8%B4%B9SSL%E8%AF%81%E4%B9%A6%E7%94%B3%E8%AF%B7%E5%92%8C%E9%85%8D%E7%BD%AE%E4%B8%83%E7%89%9B%E4%BA%91HTTPS/">阿里云免费SSL证书申请和配置七牛云HTTPS</a>
+            
+            <a class="next" rel="next" href="/antan-blog/2019/11/09/%E6%B5%8F%E8%A7%88%E5%99%A8%E7%BC%93%E5%AD%98/">浏览器缓存</a>
             
         </section>
 
