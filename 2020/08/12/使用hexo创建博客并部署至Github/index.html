@@ -12,7 +12,7 @@
 
 
 
-<title>阿里云免费SSL证书申请和配置七牛云HTTPS | 安昙的博客</title>
+<title>使用hexo创建博客并部署至Github | 安昙的博客</title>
 
 
 
@@ -173,7 +173,7 @@
     
     <article class="post-wrap">
         <header class="post-header">
-            <h1 class="post-title">阿里云免费SSL证书申请和配置七牛云HTTPS</h1>
+            <h1 class="post-title">使用hexo创建博客并部署至Github</h1>
             
                 <div class="post-meta">
                     
@@ -182,7 +182,7 @@
 
                     
                         <span class="post-time">
-                        Date: <a href="#">二月 26, 2021&nbsp;&nbsp;22:26:32</a>
+                        Date: <a href="#">八月 12, 2020&nbsp;&nbsp;11:21:13</a>
                         </span>
                     
                     
@@ -191,13 +191,41 @@
         </header>
 
         <div class="post-content">
-            <h1 id="阿里云免费SSL证书"><a href="#阿里云免费SSL证书" class="headerlink" title="阿里云免费SSL证书"></a>阿里云免费SSL证书</h1><h2 id="选购证书"><a href="#选购证书" class="headerlink" title="选购证书"></a>选购证书</h2><p>进入<a target="_blank" rel="noopener" href="https://www.aliyun.com/product/security/markets/aliyun/product/cas?spm=5176.12825654.h2v3icoap.635.e9392c4aHaG07V">SSL证书选购页面</a>，点击选购证书，然后证书类型选择DV单域名证书完成选购。<br><img src="https://zqfile.banzheshenghuo.com/20210426220512.png" alt="选购证书"></p>
-<h2 id="申请证书"><a href="#申请证书" class="headerlink" title="申请证书"></a>申请证书</h2><p>进入<a target="_blank" rel="noopener" href="https://yundun.console.aliyun.com/?spm=a2c6h.12873639.0.0.6a3e45f8I5eLYa&p=cas#/overview/">阿里云SSL控制台</a>，选择之前的免费SSL。<br><img src="https://zqfile.banzheshenghuo.com/20210426220729.png" alt="证书申请"></p>
-<p>然后在证书列表找到刚创建的证书，点击证书申请，按照提示填写域名、邮箱等信息。</p>
-<p>阿里云提供多版本SSL证书，如Tomcat、Apache、Nginx和IIS等。</p>
-<h1 id="七牛云配置HTTPS"><a href="#七牛云配置HTTPS" class="headerlink" title="七牛云配置HTTPS"></a>七牛云配置HTTPS</h1><p>进入<a target="_blank" rel="noopener" href="https://portal.qiniu.com/cdn/domain">域名管理页面</a>，点击需要配置的域名，选择HTTPS配置。<br><img src="https://zqfile.banzheshenghuo.com/20210426210215.png" alt="七牛云"></p>
-<h2 id="本地上传证书"><a href="#本地上传证书" class="headerlink" title="本地上传证书"></a>本地上传证书</h2><p>选择本地上传。然后将之前下载的阿里云SSL证书压缩包解压，将以<code>*.public.crt</code>和 <code>*.key</code>后缀的文件使用文本编辑器或IDE打开，将<strong>全部内容</strong>复制粘贴至证书内容和证书秘钥中。<br><img src="https://zqfile.banzheshenghuo.com/20210426210403.png" alt="添加证书"><br>然后等待几分钟配置生效。</p>
-<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a target="_blank" rel="noopener" href="https://developer.aliyun.com/article/766913">2020阿里云免费SSL证书申请方法流程</a></p>
+            <h1 id="hexo"><a href="#hexo" class="headerlink" title="hexo"></a>hexo</h1><h2 id="使用hexo创建博客"><a href="#使用hexo创建博客" class="headerlink" title="使用hexo创建博客"></a>使用hexo创建博客</h2><ol>
+<li>全局安装 hexo 脚手架<br><code>npm install hexo-cli -g  </code></li>
+<li>创建hexo项目<br><code>hexo init blog</code></li>
+<li>进入项目，启动本地<code>server</code><br><code>cd blog &amp;&amp; hexo server</code></li>
+</ol>
+<h2 id="常用指令"><a href="#常用指令" class="headerlink" title="常用指令"></a>常用指令</h2><p><code>hexo new [layout] &lt;filename&gt;</code></p>
+<ul>
+<li>filename: 文件名，使用引号包裹</li>
+<li>layout：post | draft | page<blockquote>
+<p>post为正式的可见文章。<br>draft为草稿文件，默认不可见。</p>
+</blockquote>
+</li>
+</ul>
+<p><code>hexo publish [layout] &lt;filename&gt;</code><br>发表草稿文件，比如上面使用<code>hexo new draft xx</code>创建的草稿文件转换成正式文件。</p>
+<p><code>hexo generate</code><br>在hexo项目的public目录中生成静态文件。</p>
+<p><code>hexo clean</code><br>清除缓存文件和已经生成的静态文件。</p>
+<h2 id="主题"><a href="#主题" class="headerlink" title="主题"></a>主题</h2><p>如果你对hexo默认的主题不感兴趣，可以选择<a target="_blank" rel="noopener" href="https://hexo.io/themes/">官方推荐的主题</a>。</p>
+<h3 id="使用方式"><a href="#使用方式" class="headerlink" title="使用方式"></a>使用方式</h3><p>一般将主题仓库<code>clone</code>至<code>hexo</code>项目的<code>themes</code>文件夹下，然后在hexo项目的<code>_config.yml</code>文件内修改<code>theme</code>为已添加的主题。</p>
+<p>具体细节和定制可以查看主题仓库的 <code>README.md</code>。</p>
+<h1 id="部署到-GitHub-Pages"><a href="#部署到-GitHub-Pages" class="headerlink" title="部署到 GitHub Pages"></a>部署到 GitHub Pages</h1><h2 id="使用Travis-CI"><a href="#使用Travis-CI" class="headerlink" title="使用Travis CI"></a>使用Travis CI</h2><blockquote>
+<p>Travis CI  只有对开源的repository是免费的，如果需要部署私有项目可以使用下面的一键部署或Github Action</p>
+</blockquote>
+<h2 id="一键部署"><a href="#一键部署" class="headerlink" title="一键部署"></a>一键部署</h2><ol>
+<li><p>安装 hexo-deployer-git<br> <code>npm install hexo-deployer-git --save</code></p>
+</li>
+<li><p>在 _config.yml（如果有已存在的请删除）添加如下配置：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">deploy:</span><br><span class="line">  type: git</span><br><span class="line">  repo: https:&#x2F;&#x2F;github.com&#x2F;&lt;username&gt;&#x2F;&lt;project&gt;</span><br><span class="line">  # example, https:&#x2F;&#x2F;github.com&#x2F;hexojs&#x2F;hexojs.github.io</span><br><span class="line">  branch: gh-pages</span><br></pre></td></tr></table></figure></li>
+<li><p>运行 hexo clean &amp;&amp; hexo deploy 。</p>
+</li>
+<li><p>查看 <code>[username].github.io</code> 上的网页是否部署成功。</p>
+</li>
+</ol>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ul>
+<li><a target="_blank" rel="noopener" href="https://hexo.io/zh-cn/"><em>hexo官方文档</em></a></li>
+</ul>
 
         </div>
 
@@ -212,7 +240,7 @@
                 
                     <p class="copyright-item">
                         <span>Permalink:</span>
-                        <span><a href="https://banzheshenghuo.github.io/antan-blog/2021/02/26/%E9%98%BF%E9%87%8C%E4%BA%91%E5%85%8D%E8%B4%B9SSL%E8%AF%81%E4%B9%A6%E7%94%B3%E8%AF%B7%E5%92%8C%E9%85%8D%E7%BD%AE%E4%B8%83%E7%89%9B%E4%BA%91HTTPS/">https://banzheshenghuo.github.io/antan-blog/2021/02/26/%E9%98%BF%E9%87%8C%E4%BA%91%E5%85%8D%E8%B4%B9SSL%E8%AF%81%E4%B9%A6%E7%94%B3%E8%AF%B7%E5%92%8C%E9%85%8D%E7%BD%AE%E4%B8%83%E7%89%9B%E4%BA%91HTTPS/</a></span>
+                        <span><a href="https://banzheshenghuo.github.io/antan-blog/2020/08/12/%E4%BD%BF%E7%94%A8hexo%E5%88%9B%E5%BB%BA%E5%8D%9A%E5%AE%A2%E5%B9%B6%E9%83%A8%E7%BD%B2%E8%87%B3Github/">https://banzheshenghuo.github.io/antan-blog/2020/08/12/%E4%BD%BF%E7%94%A8hexo%E5%88%9B%E5%BB%BA%E5%8D%9A%E5%AE%A2%E5%B9%B6%E9%83%A8%E7%BD%B2%E8%87%B3Github/</a></span>
                     </p>
                 
                 
@@ -235,6 +263,10 @@
                 <span>Tag(s):</span>
                 <span class="tag">
                     
+                    
+                        <a href="/antan-blog/source/tag/hexo/"># hexo</a>
+                    
+                        
                 </span>
             </div>
             <div>
@@ -245,10 +277,10 @@
         </section>
         <section class="post-nav">
             
-                <a class="prev" rel="prev" href="/antan-blog/2021/03/01/hello-world/">hexo 快速上手</a>
+                <a class="prev" rel="prev" href="/antan-blog/2021/02/26/%E9%98%BF%E9%87%8C%E4%BA%91%E5%85%8D%E8%B4%B9SSL%E8%AF%81%E4%B9%A6%E7%94%B3%E8%AF%B7%E5%92%8C%E9%85%8D%E7%BD%AE%E4%B8%83%E7%89%9B%E4%BA%91HTTPS/">阿里云免费SSL证书申请和配置七牛云HTTPS</a>
             
             
-            <a class="next" rel="next" href="/antan-blog/2020/08/12/%E4%BD%BF%E7%94%A8hexo%E5%88%9B%E5%BB%BA%E5%8D%9A%E5%AE%A2%E5%B9%B6%E9%83%A8%E7%BD%B2%E8%87%B3Github/">使用hexo创建博客并部署至Github</a>
+            <a class="next" rel="next" href="/antan-blog/2019/11/09/%E6%B5%8F%E8%A7%88%E5%99%A8%E7%BC%93%E5%AD%98/">浏览器缓存</a>
             
         </section>
 
