@@ -211,18 +211,29 @@
 <h3 id="使用方式"><a href="#使用方式" class="headerlink" title="使用方式"></a>使用方式</h3><p>一般将主题仓库<code>clone</code>至<code>hexo</code>项目的<code>themes</code>文件夹下，然后在hexo项目的<code>_config.yml</code>文件内修改<code>theme</code>为已添加的主题。</p>
 <p>具体细节和定制可以查看主题仓库的 <code>README.md</code>。</p>
 <h1 id="部署到-GitHub-Pages"><a href="#部署到-GitHub-Pages" class="headerlink" title="部署到 GitHub Pages"></a>部署到 GitHub Pages</h1><h2 id="使用Travis-CI"><a href="#使用Travis-CI" class="headerlink" title="使用Travis CI"></a>使用Travis CI</h2><blockquote>
-<p>Travis CI  只有对开源的repository是免费的，如果需要部署私有项目可以使用下面的一键部署或Github Action</p>
+<p>Travis CI  只有对开源的repository是免费的</p>
 </blockquote>
 <h2 id="一键部署"><a href="#一键部署" class="headerlink" title="一键部署"></a>一键部署</h2><ol>
-<li><p>安装 hexo-deployer-git<br> <code>npm install hexo-deployer-git --save</code></p>
+<li><p>安装 <code>hexo-deployer-git</code><br> <code>npm install hexo-deployer-git --save</code></p>
 </li>
 <li><p>在 _config.yml（如果有已存在的请删除）添加如下配置：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">deploy:</span><br><span class="line">  type: git</span><br><span class="line">  repo: https:&#x2F;&#x2F;github.com&#x2F;&lt;username&gt;&#x2F;&lt;project&gt;</span><br><span class="line">  # example, https:&#x2F;&#x2F;github.com&#x2F;hexojs&#x2F;hexojs.github.io</span><br><span class="line">  branch: gh-pages</span><br></pre></td></tr></table></figure></li>
 <li><p>运行 hexo clean &amp;&amp; hexo deploy 。</p>
 </li>
 <li><p>查看 <code>[username].github.io</code> 上的网页是否部署成功。</p>
+<blockquote>
+<p>在GitHub 中对需要部署的 repository 进行设置，修改 GitHub Pages 的部署分支为 gh-pages。</p>
+</blockquote>
 </li>
 </ol>
+<h1 id="问题和注意事项"><a href="#问题和注意事项" class="headerlink" title="问题和注意事项"></a>问题和注意事项</h1><h2 id="设置Github-Pages"><a href="#设置Github-Pages" class="headerlink" title="设置Github Pages"></a>设置Github Pages</h2><p>打开需要部署的项目的Settings，找到 GitHub Pages 然后将<code>gh-pages</code>设为默认源。<br><img src="https://zqfile.banzheshenghuo.com/20210427155505.png" alt="设置源"></p>
+<blockquote>
+<p>注意：GitHub Pages 免费版只能用在 public 项目上，如果想在 private 使用需要升级GitHub Pages服务。</p>
+</blockquote>
+<h2 id="一键部署中出现以下报错"><a href="#一键部署中出现以下报错" class="headerlink" title="一键部署中出现以下报错"></a>一键部署中出现以下报错</h2><p>fatal: unable to access <code>&#39;https://github.com/[githubname]/[projectname]/&#39;</code>: LibreSSL SSL_connect: SSL_ERROR_SYSCALL in connection to <code>github.com:443</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">FATAL &#123;</span><br><span class="line">  err: Error: Spawn failed</span><br><span class="line">      at ChildProcess.&lt;anonymous&gt; (blog&#x2F;node_modules&#x2F;hexo-util&#x2F;lib&#x2F;spawn.js:51:21)</span><br><span class="line">      at ChildProcess.emit (events.js:315:20)</span><br><span class="line">      at Process.ChildProcess._handle.onexit (internal&#x2F;child_process.js:277:12) &#123;</span><br><span class="line">    code: 128</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>原因和方案：网络问题，翻墙即可。</p>
+<h2 id="样式图片资源未加载"><a href="#样式图片资源未加载" class="headerlink" title="样式图片资源未加载"></a>样式图片资源未加载</h2><p>在<code>_config.yml</code>中修改 <code>url</code>为预览地址。<br><img src="https://zqfile.banzheshenghuo.com/20210427154811.png" alt="修改url"></p>
 <h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ul>
 <li><a target="_blank" rel="noopener" href="https://hexo.io/zh-cn/"><em>hexo官方文档</em></a></li>
 </ul>
