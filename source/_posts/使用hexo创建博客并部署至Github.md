@@ -37,11 +37,11 @@ tags: hexo
 
 # 部署到 GitHub Pages
 ## 使用Travis CI 
-> Travis CI  只有对开源的repository是免费的，如果需要部署私有项目可以使用下面的一键部署或Github Action
+> Travis CI  只有对开源的repository是免费的
 
 
 ## 一键部署
-1. 安装 hexo-deployer-git
+1. 安装 `hexo-deployer-git`
 	`npm install hexo-deployer-git --save`
 2. 在 _config.yml（如果有已存在的请删除）添加如下配置：
 ```
@@ -54,7 +54,33 @@ deploy:
 
 3. 运行 hexo clean && hexo deploy 。
 4. 查看 `[username].github.io` 上的网页是否部署成功。
+> 在GitHub 中对需要部署的 repository 进行设置，修改 GitHub Pages 的部署分支为 gh-pages。
 
+
+# 问题和注意事项
+## 设置Github Pages
+打开需要部署的项目的Settings，找到 GitHub Pages 然后将`gh-pages`设为默认源。
+![设置源](https://zqfile.banzheshenghuo.com/20210427155505.png)
+> 注意：GitHub Pages 免费版只能用在 public 项目上，如果想在 private 使用需要升级GitHub Pages服务。
+
+
+##  一键部署中出现以下报错
+fatal: unable to access `'https://github.com/[githubname]/[projectname]/'`: LibreSSL SSL_connect: SSL_ERROR_SYSCALL in connection to `github.com:443`
+```
+FATAL {
+  err: Error: Spawn failed
+      at ChildProcess.<anonymous> (blog/node_modules/hexo-util/lib/spawn.js:51:21)
+      at ChildProcess.emit (events.js:315:20)
+      at Process.ChildProcess._handle.onexit (internal/child_process.js:277:12) {
+    code: 128
+  }
+}
+```
+原因和方案：网络问题，翻墙即可。
+
+## 样式图片资源未加载
+在`_config.yml`中修改 `url`为预览地址。
+![修改url](https://zqfile.banzheshenghuo.com/20210427154811.png)
 
 # 参考
 - [_hexo官方文档_](https://hexo.io/zh-cn/)
