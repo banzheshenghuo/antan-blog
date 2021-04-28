@@ -35,10 +35,75 @@ tags: hexo
 
 具体细节和定制可以查看主题仓库的 `README.md`。
 
-# 部署到 GitHub Pages
-## 使用Travis CI 
-> Travis CI  只有对开源的repository是免费的
+# 将hexo项目推送至Github
+在Github上创建仓库并推送，仓库名可以自定义，例如：`my-blog`
 
+# 创建Github Pages（已经创建可以忽略这部分内容）
+不了解Github Pages的可以看看[官方介绍](https://docs.github.com/cn/pages)。
+
+简单来说就是依托于Github创建个人的静态站点。
+
+首先为站点创建仓库，仓库名必须是`<userName>.github.io`，[参考文档](https://docs.github.com/cn/pages/getting-started-with-github-pages/creating-a-github-pages-site)
+> 仓库必须选择public
+
+也可以将博客项目部署到其他项目（Project page），访问地址是`https://<userName>.github.io/[projectName]`。
+
+# 部署到 GitHub Pages
+## Github Actions 部署
+简单的说 Github Actions 是 Github 提供的持续集成服务，可以帮助我们抓取代码、运行测试、登录远程服务器，发布到第三方服务等等。
+
+这里使用 Github Actions 来监听maste的push事件，创建静态文件并推送至远程的操作。
+
+1. 首先检查自己`package.json`文件是否有hexo的打包指令，没有就加上。
+```json
+{
+  //xxx
+  "scripts": {
+    "build": "hexo generate", // 没有就加上
+    "clean": "hexo clean",
+    "server": "hexo server"
+  },
+  //xx
+}
+```
+2. 在hexo项目的根目录添加 `.github/workflows/deploy.yml`文件，内容如下：
+```yml
+name: deploy to Github Pages # 工作流 name
+
+on:            # 触发条件
+  push:        # push事件
+    branches:  # 指定分支
+      master   # master分支
+
+jobs:          # 任务，一个workflow可以有多个job
+  deploy:      # 任务名为 deploy
+    runs-on: ubuntu-latest  # 运行环境
+    steps: 
+      - uses: actions/checkout@v2
+      - name: Use Node.js 12.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: '12.x'
+      - name: Cache NPM dependencies  
+        uses: actions/cache@v2
+        with:
+          path: node_modules
+          key: ${{ runner.OS }}-npm-cache
+          restore-keys: |
+            ${{ runner.OS }}-npm-cache
+      - name: Install Dependencies  # 安装hexo依赖
+        run: npm install
+      - name: Build   # 执行打包命令，生成静态文件
+        run: npm run build
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./public  # 静态文件的资源路径
+          publish_branch: gh-pages  # 部署的分支
+```
+
+3. 将修改内容推送至远程仓库，然后修改 GitHub Pages 的部署分支为 gh-pages
 
 ## 一键部署
 1. 安装 `hexo-deployer-git`
@@ -56,6 +121,8 @@ deploy:
 4. 查看 `[username].github.io` 上的网页是否部署成功。
 > 在GitHub 中对需要部署的 repository 进行设置，修改 GitHub Pages 的部署分支为 gh-pages。
 
+## 使用Travis CI 
+> Travis CI  只有对开源的repository是免费的
 
 # 问题和注意事项
 ## 设置Github Pages
@@ -84,3 +151,4 @@ FATAL {
 
 # 参考
 - [_hexo官方文档_](https://hexo.io/zh-cn/)
+- [_Github Pages_](https://docs.github.com/cn/pages/getting-started-with-github-pages)

@@ -1,5 +1,5 @@
 {
-  "name": "hexo-site",
+  "name": "antan-blog",
   "version": "0.0.0",
   "private": true,
   "scripts": {
@@ -11,6 +11,7 @@
   "hexo": {
     "version": "5.4.0"
   },
+  "home":"https://banzheshenghuo.github.io/antan-blog",
   "dependencies": {
     "hexo": "^5.0.0",
     "hexo-generator-archive": "^1.0.0",
