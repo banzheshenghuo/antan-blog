@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="安昙">
+
+
+
+
+
+<title>Promise执行顺序 | 安昙的博客</title>
+
+
+
+    <link rel="icon" href="/antan-blog/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/antan-blog/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/antan-blog/js/script.js"></script>
+    
+    <script src="/antan-blog/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+<body>
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/antan-blog/">Home</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/antan-blog/archives">Posts</a>
+                
+                    <a class="menu-item" href="/antan-blog/category">Categories</a>
+                
+                    <a class="menu-item" href="/antan-blog/tag">Tags</a>
+                
+                    <a class="menu-item" href="/antan-blog/about">About</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/antan-blog/">Home</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/antan-blog/archives">Posts</a>
+                
+                    <a class="menu-item" href="/antan-blog/category">Categories</a>
+                
+                    <a class="menu-item" href="/antan-blog/tag">Tags</a>
+                
+                    <a class="menu-item" href="/antan-blog/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+        <div class="main">
+            <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    document.ready(
+        function () {
+            tocbot.init({
+                tocSelector: '.tocbot-list',
+                contentSelector: '.post-content',
+                headingSelector: 'h1, h2, h3, h4, h5',
+                collapseDepth: 1,
+                orderedList: false,
+                scrollSmooth: true,
+            })
+        }
+    )
+
+    function expand_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 6,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "collapse_toc()");
+        b.innerHTML = "Collapse all"
+    }
+
+    function collapse_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 1,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "expand_toc()");
+        b.innerHTML = "Expand all"
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">Promise执行顺序</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">安昙</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">十二月 13, 2019&nbsp;&nbsp;15:42:01</a>
+                        </span>
+                    
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="基本流程"><a href="#基本流程" class="headerlink" title="基本流程"></a>基本流程</h1><p>首先要知道最基础的执行流程，首先执行当前的宏任务并将执行过程中的微任务加入微任务队列，然后当前宏任务执行完毕后执行当前宏任务的微任务队列，接着在执行下一个宏任务。</p>
+<h1 id="promise执行过程中的要点"><a href="#promise执行过程中的要点" class="headerlink" title="promise执行过程中的要点"></a>promise执行过程中的要点</h1><h2 id="Promise-then-中的回调函数才是微任务"><a href="#Promise-then-中的回调函数才是微任务" class="headerlink" title="Promise.then 中的回调函数才是微任务"></a>Promise.then 中的回调函数才是微任务</h2><p>所以，Promise在实例化的过程中是同步执行的</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 例子1</span></span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">&#x27;start&#x27;</span>)</span><br><span class="line"><span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function">(<span class="params">resolve</span>)=&gt;</span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">&#x27;promise&#x27;</span>)</span><br><span class="line">&#125;).then(<span class="function">()=&gt;</span>&#123;</span><br><span class="line">	<span class="built_in">console</span>.log(<span class="string">&#x27;then&#x27;</span>)</span><br><span class="line">&#125;)</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">&#x27;end&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">//执行结果</span></span><br><span class="line"><span class="comment">// start</span></span><br><span class="line"><span class="comment">// promise</span></span><br><span class="line"><span class="comment">// end</span></span><br><span class="line"><span class="comment">// then</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="Promise-then-回调函数何时加入微任务队列"><a href="#Promise-then-回调函数何时加入微任务队列" class="headerlink" title="Promise.then 回调函数何时加入微任务队列"></a>Promise.then 回调函数何时加入微任务队列</h2><p>这里要知道三个概念，<strong>注册</strong>then回调，加入微任务队列，执行。</p>
+<ul>
+<li>执行  这个好理解，如果到了执行这一步就是真正去运行，打印日志了</li>
+<li>加入微任务队列 在执行的过程中，发现状态变更的微任务，那么就直接加入微任务队列</li>
+<li><strong>注册</strong>then回调  不是所有的then回调都会立即加入微任务队列，在pending时只会先进行注册然后等待状态变更<blockquote>
+<p>上面说的状态就是<code>Promise</code>的状态，只会从 <code>penging</code> 变为 <code>resolved</code> 或 <code>rejected</code></p>
+</blockquote>
+</li>
+</ul>
+<p>那么何时加入微任务队列呢？</p>
+<p>首先当执行到then方法时，查看<code>Promise</code>状态，</p>
+<ul>
+<li>如果状态已经变更，那么就直接加入微任务队列。</li>
+<li>如果状态没变，则先进行注册（如果有多个then回调会注册多次，类似队列），等待后续状态变更后再加入微任务队列。</li>
+</ul>
+<p>第一种情况可以参考上面的例子1，在实例化时直接调用了<code>resolve()</code>，所以执行完当前的宏任务后在执行 then 回调</p>
+<p>第二种情况见 例子2</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 例子2</span></span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">&#x27;start&#x27;</span>)</span><br><span class="line"><span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function">(<span class="params">resolve</span>)=&gt;</span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">&#x27;promise1&#x27;</span>)</span><br><span class="line">    <span class="built_in">setTimeout</span>(resolve)</span><br><span class="line">&#125;).then(<span class="function">()=&gt;</span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">&#x27;then1&#x27;</span>)</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line"><span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function">(<span class="params">resolve</span>)=&gt;</span>&#123;</span><br><span class="line">	<span class="built_in">console</span>.log(<span class="string">&#x27;promise2&#x27;</span>)</span><br><span class="line">    resolve()</span><br><span class="line">&#125;).then(<span class="function">()=&gt;</span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">&#x27;then2&#x27;</span>)</span><br><span class="line">&#125;)</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">&#x27;end&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 执行顺序</span></span><br><span class="line"><span class="comment">// start</span></span><br><span class="line"><span class="comment">// promise1</span></span><br><span class="line"><span class="comment">// promise2</span></span><br><span class="line"><span class="comment">// end</span></span><br><span class="line"><span class="comment">// then2</span></span><br><span class="line"><span class="comment">// then1</span></span><br></pre></td></tr></table></figure>
+<p>可以看到，第一个<code>promise</code> 先于第二个<code>promise</code>执行，但是因为第一个<code>promise</code>的状态延时改变，所以只注册而没有加入微任务队列。而第二个<code>promise</code>在实例化时就变为 <code>resolved</code>，所以他的 then回调 直接加入微任务队列早一步执行。</p>
+<p>再回看第一个<code>promise</code>，在状态延迟变更后会将之前注册的then回调加入微任务队列。</p>
+<h2 id="then回调的返回值"><a href="#then回调的返回值" class="headerlink" title="then回调的返回值"></a>then回调的返回值</h2><p>首先明确一点，then回调函数返回的也是一个<code>Promise</code>。</p>
+<p>需要注意的是返回值的类型。</p>
+<ul>
+<li>返回非Promise类型的值  一般会被<code>Promise.resolve</code> 进行包裹，表示当前执行结束后立即修改状态为<code>resolved</code>。</li>
+<li>返回Promise类型的值 等待该 <code>Promise</code></li>
+</ul>
+<p>上面2种情况貌似看起来没啥意义，但是如果后面还有 then回调 就可以看出他们的区别，可以看看下面2个例子。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 例子3</span></span><br><span class="line"><span class="built_in">Promise</span>.resolve().then(<span class="function">()=&gt;</span>&#123;</span><br><span class="line">   <span class="built_in">console</span>.log(<span class="string">&#x27;外层第一个then&#x27;</span>)</span><br><span class="line">   <span class="keyword">return</span> <span class="built_in">Promise</span>.resolve().then(<span class="function">()=&gt;</span>&#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">&#x27;内部第一个then&#x27;</span>)</span><br><span class="line">    &#125;).then(<span class="function">()=&gt;</span>&#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">&#x27;内部第二个then&#x27;</span>)</span><br><span class="line">    &#125;)</span><br><span class="line">&#125;).then(<span class="function">()=&gt;</span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">&#x27;外部第二个then&#x27;</span>)</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 执行</span></span><br><span class="line"><span class="comment">// 外层第一个then</span></span><br><span class="line"><span class="comment">// 内部第一个then</span></span><br><span class="line"><span class="comment">// 内部第二个then</span></span><br><span class="line"><span class="comment">// 外部第二个then</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 例子4</span></span><br><span class="line"><span class="built_in">Promise</span>.resolve().then(<span class="function">()=&gt;</span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">&#x27;外层第一个then&#x27;</span>)</span><br><span class="line">    <span class="built_in">Promise</span>.resolve().then(<span class="function">()=&gt;</span>&#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">&#x27;内部第一个then&#x27;</span>)</span><br><span class="line">    &#125;).then(<span class="function">()=&gt;</span>&#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">&#x27;内部第二个then&#x27;</span>)</span><br><span class="line">    &#125;)</span><br><span class="line">&#125;).then(<span class="function">()=&gt;</span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">&#x27;外部第二个then&#x27;</span>)</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 执行</span></span><br><span class="line"><span class="comment">// 外层第一个then</span></span><br><span class="line"><span class="comment">// 内部第一个then</span></span><br><span class="line"><span class="comment">// 外部第二个then</span></span><br><span class="line"><span class="comment">// 内部第二个then</span></span><br></pre></td></tr></table></figure>
+
+
+
+        </div>
+
+        <!-- 
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>安昙</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="https://banzheshenghuo.github.io/antan-blog/2019/12/13/Promise%E6%89%A7%E8%A1%8C%E9%A1%BA%E5%BA%8F/">https://banzheshenghuo.github.io/antan-blog/2019/12/13/Promise%E6%89%A7%E8%A1%8C%E9%A1%BA%E5%BA%8F/</a></span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>License:</span>
+                        <span>Copyright (c) 2019 <a target="_blank" rel="noopener" href="http://creativecommons.org/licenses/by-nc/4.0/">CC-BY-NC-4.0</a> LICENSE</span>
+                    </p>
+                
+                
+                     <p class="copyright-item">
+                         <span>Slogan:</span>
+                         <span>Do you believe in <strong>DESTINY</strong>?</span>
+                     </p>
+                
+
+            </section>
+         -->
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/antan-blog/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+                <a class="prev" rel="prev" href="/antan-blog/2020/08/12/%E4%BD%BF%E7%94%A8hexo%E5%88%9B%E5%BB%BA%E5%8D%9A%E5%AE%A2%E5%B9%B6%E9%83%A8%E7%BD%B2%E8%87%B3Github/">使用hexo创建博客并部署至Github</a>
+            
+            
+            <a class="next" rel="next" href="/antan-blog/2019/11/09/%E6%B5%8F%E8%A7%88%E5%99%A8%E7%BC%93%E5%AD%98/">浏览器缓存</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+        </div>
+        <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© 安昙 | Powered by Hexo & Chic</span>
+    </div>
+</footer>
+
+    </div>
+</body>
+</html>
