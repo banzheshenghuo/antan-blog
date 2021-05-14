@@ -191,15 +191,29 @@
         </header>
 
         <div class="post-content">
-            <h1 id="基本流程"><a href="#基本流程" class="headerlink" title="基本流程"></a>基本流程</h1><p>首先要知道最基础的执行流程，首先执行当前的宏任务并将执行过程中的微任务加入微任务队列，然后当前宏任务执行完毕后执行当前宏任务的微任务队列，接着在执行下一个宏任务。</p>
-<h1 id="promise执行过程中的要点"><a href="#promise执行过程中的要点" class="headerlink" title="promise执行过程中的要点"></a>promise执行过程中的要点</h1><h2 id="Promise-then-中的回调函数才是微任务"><a href="#Promise-then-中的回调函数才是微任务" class="headerlink" title="Promise.then 中的回调函数才是微任务"></a>Promise.then 中的回调函数才是微任务</h2><p>所以，Promise在实例化的过程中是同步执行的</p>
+            <blockquote>
+<p>面试经常会考 Promise 的执行顺序，这里简单记录我的理解和关键点。</p>
+</blockquote>
+<h1 id="基本流程"><a href="#基本流程" class="headerlink" title="基本流程"></a>基本流程</h1><p>先简单说下事件循环的执行过程。</p>
+<ol>
+<li>首先执行最初的宏任务（一般是脚本的初始化）</li>
+<li>在执行过程中<ul>
+<li>如果有等待执行的微任务就加入当前宏任务的微任务队列</li>
+<li>如果等待执行的宏任务则加入宏任务队列</li>
+</ul>
+</li>
+<li>执行完毕后，拉取当前宏任务所属的微任务执行</li>
+<li>执行完微任务队列所有微任务后，拉取下一个宏任务执行，循环上述流程</li>
+</ol>
+<p>然后说说 <code>promise</code> 执行过程中的需要注意的点</p>
+<h1 id="Promise-then-中的回调函数才是微任务"><a href="#Promise-then-中的回调函数才是微任务" class="headerlink" title="Promise.then 中的回调函数才是微任务"></a>Promise.then 中的回调函数才是微任务</h1><p><code>Promise</code>在实例化的过程中是同步执行的，只有<code>Promise</code>的then方法的回调函数才属于微任务。</p>
 <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 例子1</span></span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">&#x27;start&#x27;</span>)</span><br><span class="line"><span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function">(<span class="params">resolve</span>)=&gt;</span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">&#x27;promise&#x27;</span>)</span><br><span class="line">&#125;).then(<span class="function">()=&gt;</span>&#123;</span><br><span class="line">	<span class="built_in">console</span>.log(<span class="string">&#x27;then&#x27;</span>)</span><br><span class="line">&#125;)</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">&#x27;end&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">//执行结果</span></span><br><span class="line"><span class="comment">// start</span></span><br><span class="line"><span class="comment">// promise</span></span><br><span class="line"><span class="comment">// end</span></span><br><span class="line"><span class="comment">// then</span></span><br></pre></td></tr></table></figure>
 
-<h2 id="Promise-then-回调函数何时加入微任务队列"><a href="#Promise-then-回调函数何时加入微任务队列" class="headerlink" title="Promise.then 回调函数何时加入微任务队列"></a>Promise.then 回调函数何时加入微任务队列</h2><p>这里要知道三个概念，<strong>注册</strong>then回调，加入微任务队列，执行。</p>
+<h1 id="Promise-then-回调函数何时加入微任务队列"><a href="#Promise-then-回调函数何时加入微任务队列" class="headerlink" title="Promise.then 回调函数何时加入微任务队列"></a>Promise.then 回调函数何时加入微任务队列</h1><p>这里要知道三个操作，分别是 <code>执行</code>、<code>加入微任务队列</code>、<code>注册then回调函数</code>。</p>
 <ul>
-<li>执行  这个好理解，如果到了执行这一步就是真正去运行，打印日志了</li>
-<li>加入微任务队列 在执行的过程中，发现状态变更的微任务，那么就直接加入微任务队列</li>
-<li><strong>注册</strong>then回调  不是所有的then回调都会立即加入微任务队列，在pending时只会先进行注册然后等待状态变更<blockquote>
+<li>执行  执行操作就是真正去运行代码。</li>
+<li>加入微任务队列    在执行的过程中，发现状态变更的微任务，那么就直接加入微任务队列（不是发现微任务就立即加入微任务队列）。</li>
+<li>注册then回调函数  不是所有的then回调都会立即加入微任务队列，<code>Promise</code>的状态为<code>pending</code>时，只会先进行注册然后等待状态变更后再加入微任务队列。<blockquote>
 <p>上面说的状态就是<code>Promise</code>的状态，只会从 <code>penging</code> 变为 <code>resolved</code> 或 <code>rejected</code></p>
 </blockquote>
 </li>
@@ -211,11 +225,11 @@
 <li>如果状态没变，则先进行注册（如果有多个then回调会注册多次，类似队列），等待后续状态变更后再加入微任务队列。</li>
 </ul>
 <p>第一种情况可以参考上面的例子1，在实例化时直接调用了<code>resolve()</code>，所以执行完当前的宏任务后在执行 then 回调</p>
-<p>第二种情况见 例子2</p>
+<p>第二种情况如下</p>
 <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 例子2</span></span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">&#x27;start&#x27;</span>)</span><br><span class="line"><span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function">(<span class="params">resolve</span>)=&gt;</span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">&#x27;promise1&#x27;</span>)</span><br><span class="line">    <span class="built_in">setTimeout</span>(resolve)</span><br><span class="line">&#125;).then(<span class="function">()=&gt;</span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">&#x27;then1&#x27;</span>)</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line"><span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function">(<span class="params">resolve</span>)=&gt;</span>&#123;</span><br><span class="line">	<span class="built_in">console</span>.log(<span class="string">&#x27;promise2&#x27;</span>)</span><br><span class="line">    resolve()</span><br><span class="line">&#125;).then(<span class="function">()=&gt;</span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">&#x27;then2&#x27;</span>)</span><br><span class="line">&#125;)</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">&#x27;end&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 执行顺序</span></span><br><span class="line"><span class="comment">// start</span></span><br><span class="line"><span class="comment">// promise1</span></span><br><span class="line"><span class="comment">// promise2</span></span><br><span class="line"><span class="comment">// end</span></span><br><span class="line"><span class="comment">// then2</span></span><br><span class="line"><span class="comment">// then1</span></span><br></pre></td></tr></table></figure>
-<p>可以看到，第一个<code>promise</code> 先于第二个<code>promise</code>执行，但是因为第一个<code>promise</code>的状态延时改变，所以只注册而没有加入微任务队列。而第二个<code>promise</code>在实例化时就变为 <code>resolved</code>，所以他的 then回调 直接加入微任务队列早一步执行。</p>
-<p>再回看第一个<code>promise</code>，在状态延迟变更后会将之前注册的then回调加入微任务队列。</p>
-<h2 id="then回调的返回值"><a href="#then回调的返回值" class="headerlink" title="then回调的返回值"></a>then回调的返回值</h2><p>首先明确一点，then回调函数返回的也是一个<code>Promise</code>。</p>
+<p>可以看到，第一个<code>Promise</code> 先于第二个<code>Promise</code>执行，但是因为第一个<code>Promise</code>的状态延时改变，所以只注册而没有加入微任务队列。而第二个<code>Promise</code>在实例化时就变为 <code>resolved</code>，所以他的 then回调 直接加入微任务队列早一步执行。</p>
+<p>再回看第一个<code>Promise</code>，在状态延迟变更后会将之前注册的then回调加入微任务队列。</p>
+<h1 id="then回调的返回值"><a href="#then回调的返回值" class="headerlink" title="then回调的返回值"></a>then回调的返回值</h1><p>首先明确一点，then回调函数返回的也是一个<code>Promise</code>。</p>
 <p>需要注意的是返回值的类型。</p>
 <ul>
 <li>返回非Promise类型的值  一般会被<code>Promise.resolve</code> 进行包裹，表示当前执行结束后立即修改状态为<code>resolved</code>。</li>
