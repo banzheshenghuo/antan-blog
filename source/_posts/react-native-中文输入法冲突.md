@@ -2,6 +2,7 @@
 title: react-native 中文输入法冲突
 date: 2018-10-22 20:30:10
 tags: react-native
+categories: react-native
 ---
 最近一直在做RN开发，遇到了不少坑，昨天碰到一个中文输入冲突。
 

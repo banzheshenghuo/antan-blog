@@ -1,7 +1,8 @@
 ---
 title: 使用 MutationObserver 监听DOM变更
 date: 2019-06-08 17:10:20
-tags: Web API
+tags: MutationObserver
+categories: Web API
 ---
 > 今天在写 tampermonkey 脚本需要监听DOM的变更，想到了之前写的事件循环中的微任务 MutationObserver 就是用来监听DOM变更的，然后学习了一下如何使用并写了这篇博客作为记录。
 

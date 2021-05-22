@@ -2,6 +2,7 @@
 title: js中的深拷贝和浅拷贝
 date: 2017-03-19 12:11:59
 tags: deep clone
+categories: javascript
 ---
 之所有写这篇文章，是因为前几天在项目中被ES6的assign坑了，后来自己查阅了些资料，觉得有必要总结下。
 

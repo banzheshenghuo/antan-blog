@@ -2,6 +2,9 @@
 title: Promise执行顺序
 date: 2019-12-13 15:42:01
 tags:
+- event loop
+categories:
+- javascript
 ---
 > 面试经常会考 Promise 的执行顺序，这里简单记录我的理解和关键点。
 

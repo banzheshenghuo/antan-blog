@@ -2,6 +2,7 @@
 title: 使用hexo创建博客并部署至Github
 date: 2020-08-12 11:21:13
 tags: hexo
+categories: 工具
 ---
 # hexo
 ## 使用hexo创建博客
