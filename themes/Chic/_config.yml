@@ -15,7 +15,7 @@ favicon: /favicon.ico
 nickname: 安昙
 
 ### this variable is MarkDown form.
-description: 记录一些生活和技术.
+description: <p>念起即觉，觉而不随。</p>
 avatar: /image/avatar.png
 
 # main menu navigation
@@ -23,7 +23,7 @@ avatar: /image/avatar.png
 ## Complete url after key words.
 ## Unused key can be commented out.
 links:
-  Blog: /archives
+  # Blog: /archives
   # Category:
   # Tags: 
   # Link:
@@ -33,7 +33,7 @@ links:
   # Gallery:
   # RSS:
   # AliPay:
-  ZhiHu: https://www.zhihu.com/people/sirice
+  # ZhiHu: https://www.zhihu.com/people/sirice
   # LinkedIn:
   # FaceBook:
   # Twitter:
@@ -43,13 +43,13 @@ links:
   # Sketch:
   # Gitlab:
   # Dribbble:
-  Instagram:
-  Reddit:
+  # Instagram:
+  # Reddit:
   # YouTube:
   # QQ:
   # Weibo:
   # WeChat:
-  Github: https://github.com/Siricee
+  Github: https://github.com/banzheshenghuo
 
 # how links show: you have 2 choice--text or icon.
 links_text_enable: false
