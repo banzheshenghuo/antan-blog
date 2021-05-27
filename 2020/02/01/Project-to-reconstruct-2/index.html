@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="安昙">
+
+
+
+
+
+<title>老项目改造（二）：webpack构建优化 | 安昙</title>
+
+
+
+    <link rel="icon" href="/antan-blog/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/antan-blog/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/antan-blog/js/script.js"></script>
+    
+    <script src="/antan-blog/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+<body>
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/antan-blog/">Home</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/antan-blog/archives">Posts</a>
+                
+                    <a class="menu-item" href="/antan-blog/category">Categories</a>
+                
+                    <a class="menu-item" href="/antan-blog/tag">Tags</a>
+                
+                    <a class="menu-item" href="/antan-blog/about">About</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/antan-blog/">Home</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/antan-blog/archives">Posts</a>
+                
+                    <a class="menu-item" href="/antan-blog/category">Categories</a>
+                
+                    <a class="menu-item" href="/antan-blog/tag">Tags</a>
+                
+                    <a class="menu-item" href="/antan-blog/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+        <div class="main">
+            <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    document.ready(
+        function () {
+            tocbot.init({
+                tocSelector: '.tocbot-list',
+                contentSelector: '.post-content',
+                headingSelector: 'h1, h2, h3, h4, h5',
+                collapseDepth: 1,
+                orderedList: false,
+                scrollSmooth: true,
+            })
+        }
+    )
+
+    function expand_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 6,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "collapse_toc()");
+        b.innerHTML = "Collapse all"
+    }
+
+    function collapse_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 1,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "expand_toc()");
+        b.innerHTML = "Expand all"
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">老项目改造（二）：webpack构建优化</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">安昙</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">二月 1, 2020&nbsp;&nbsp;14:50:54</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/antan-blog/source/category/%E9%A1%B9%E7%9B%AE%E9%87%8D%E6%9E%84%E5%92%8C%E4%BC%98%E5%8C%96/">项目重构和优化</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <blockquote>
+<p>上次说到使用webpack替换roadhog，由于只添加了基础配置，性能方面肯定谈不上有多好，这篇文章着重谈谈如何进行优化。</p>
+</blockquote>
+<h1 id="性能优化的指标"><a href="#性能优化的指标" class="headerlink" title="性能优化的指标"></a>性能优化的指标</h1><p>说到性能优化，首先需要确定优化的方向，例如速度或体积。其次需要就当前维度进行分析，获取初始的数据进行分析再进行优化，最后拿优化后的数据来对比进行检验。</p>
+<p>推荐使用<code>webpack</code>的速度分析插件（<code>speed-measure-webpack-plugin</code>）和体积分析插件（<code>webpack-bundle-analyzer</code>）。</p>
+<p>我们先看看未优化的情况。</p>
+<h1 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h1><p><img src="https://zqfile.banzheshenghuo.com/20210523152257.png" alt="打包后有44M"></p>
+<blockquote>
+<p>webpack生成的bundle大小为44M。由于使用按需加载，生成了多个chunk，可以看到很多chunk包使用了相同的npm依赖（brace、antd等）。</p>
+</blockquote>
+<p><img src="https://zqfile.banzheshenghuo.com/20210523153204.png" alt="未优化的打包速度"><br>构建时间可以看到是3分43秒，耗时还是很长的。</p>
+<h1 id="体积优化"><a href="#体积优化" class="headerlink" title="体积优化"></a>体积优化</h1><h2 id="使用split打包公共模块"><a href="#使用split打包公共模块" class="headerlink" title="使用split打包公共模块"></a>使用split打包公共模块</h2><p>配置如下：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// webpack.common.js</span></span><br><span class="line">&#123;</span><br><span class="line">xxx, </span><br><span class="line">splitChunks: &#123;</span><br><span class="line">      minSize: <span class="number">30000</span>,</span><br><span class="line">      minChunks: <span class="number">1</span>,</span><br><span class="line">      maxAsyncRequests: <span class="number">5</span>,</span><br><span class="line">      maxInitialRequests: <span class="number">3</span>,</span><br><span class="line">      automaticNameDelimiter: <span class="string">&#x27;~&#x27;</span>,</span><br><span class="line">      name: <span class="literal">true</span>,</span><br><span class="line">      cacheGroups: &#123;</span><br><span class="line">        vendors: &#123;</span><br><span class="line">          name: <span class="string">&#x27;vendors&#x27;</span>,</span><br><span class="line">          test: <span class="regexp">/[\\/]node_modules[\\/]/</span>,</span><br><span class="line">          priority: -<span class="number">10</span>,</span><br><span class="line">        &#125;,</span><br><span class="line">        commons: &#123;</span><br><span class="line">          name: <span class="string">&#x27;commons&#x27;</span>,</span><br><span class="line">          minChunks: <span class="number">2</span>,</span><br><span class="line">          chunks: <span class="string">&#x27;initial&#x27;</span>,</span><br><span class="line">        &#125;,</span><br><span class="line">      &#125;,</span><br><span class="line">    &#125;,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在体积图中看到许多chunk引用了相同依赖，使用splitChunk对引入模块的代码进行分离，打包为公共模块，避免重复依赖。</p>
+<h2 id="使用体积更小的第三方库进行替换"><a href="#使用体积更小的第三方库进行替换" class="headerlink" title="使用体积更小的第三方库进行替换"></a>使用体积更小的第三方库进行替换</h2><p>老项目使用<code>moment</code>来处理日期时间戳的转换，实际上使用的场景并不多，但<code>moment</code>的大小有280kb且不支持<code>tree shaking</code>，所以我们决定干掉他。</p>
+<p>为了尽量减少业务代码改动和以后也能方便的使用日期工具库，所以最后选择使用<code>Day.js</code>替换<code>moment</code>。</p>
+<blockquote>
+<p><code>Day.js</code>几乎拥有和<code>moment</code>一样的API，而且大小只有2kb。</p>
+</blockquote>
+<p>先安装<code>Day.js</code>，<code>npm install dayjs</code>，然后添加<code>resolve.alias</code>配置。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// webpack.common.js</span></span><br><span class="line">&#123;</span><br><span class="line">	resolve: &#123;</span><br><span class="line">    	alias: &#123;</span><br><span class="line">      		moment: <span class="string">&#x27;dayjs&#x27;</span>,</span><br><span class="line">    	&#125;,</span><br><span class="line">  	&#125;,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>设置别名，减少业务代码修改。在业务代码中<code>require</code>或<code>import</code>引入的<code>moment</code>实际上指向<code>dayjs</code>。</p>
+</blockquote>
+<h1 id="速度优化"><a href="#速度优化" class="headerlink" title="速度优化"></a>速度优化</h1><h2 id="多线程打包"><a href="#多线程打包" class="headerlink" title="多线程打包"></a>多线程打包</h2><p>使用<code>thread-loader</code>。大致原理是通过维护一个<code>worker pool</code>，每次解析模块时分配一个独立的线程，因此可以大大提高构建速度。</p>
+<blockquote>
+<p><code>HappyPack</code>也是类似的。</p>
+</blockquote>
+<p>使用很简单，只需要将<code>thread-loader</code>作为模块的首个<code>loader</code>就可以开启多线程构建。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line"> <span class="built_in">module</span>: &#123;</span><br><span class="line">    rules: [</span><br><span class="line">      &#123;</span><br><span class="line">        test: <span class="regexp">/\.jsx?$/</span>,</span><br><span class="line">        exclude: <span class="regexp">/node_modules/</span>,</span><br><span class="line">        use: [<span class="string">&#x27;thread-loader&#x27;</span>, <span class="string">&#x27;babel-loader&#x27;</span>],</span><br><span class="line">      &#125;,</span><br><span class="line">    ]</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="添加缓存"><a href="#添加缓存" class="headerlink" title="添加缓存"></a>添加缓存</h2><p>首次打包会添加缓存，后续打包会利用缓存资源，大大提高打包速度。</p>
+<blockquote>
+<p>对于本地打包然后手动上传提升很大，后来使用<code>Jenkins</code>执行构建部署就没什么意义了。</p>
+</blockquote>
+<p>使用方式很简单，在<code>babel-loader</code>后面添加<code>?cacheDirectory=true</code>，示例如下：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line"> <span class="built_in">module</span>: &#123;</span><br><span class="line">    rules: [</span><br><span class="line">      &#123;</span><br><span class="line">        test: <span class="regexp">/\.jsx?$/</span>,</span><br><span class="line">        exclude: <span class="regexp">/node_modules/</span>,</span><br><span class="line">        use: [<span class="string">&#x27;thread-loader&#x27;</span>, <span class="string">&#x27;babel-loader?cacheDirectory=true&#x27;</span>],</span><br><span class="line">      &#125;,</span><br><span class="line">    ]</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>设置<code>cacheDirectory=true</code>后，首次构建较平时慢一些，会将<code>babel</code>编译后产物缓存至<code>node_modules/.cache/babel-loader</code>，待下次构建会先访问缓存资源。</p>
+<h1 id="优化后的体积和耗时"><a href="#优化后的体积和耗时" class="headerlink" title="优化后的体积和耗时"></a>优化后的体积和耗时</h1><p><img src="https://zqfile.banzheshenghuo.com/20210525210649.png"><br><img src="https://zqfile.banzheshenghuo.com/20210525211032.png"><br>速度从3分40秒缩短到43秒， 速度提高了80%。<br>体积从44M减小至6.5M，减少了88%。</p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a target="_blank" rel="noopener" href="https://github.com/webpack-contrib/webpack-bundle-analyzer">webpack-bundle-analyzer</a><br><a target="_blank" rel="noopener" href="https://github.com/stephencookdev/speed-measure-webpack-plugin"><em>speed-measure-webpack-plugin</em></a><br><a target="_blank" rel="noopener" href="https://github.com/webpack-contrib/thread-loader"><em>thread-loader</em></a><br><a target="_blank" rel="noopener" href="https://github.com/babel/babel-loader"><em>babel-loader</em></a></p>
+
+        </div>
+
+        <!-- 
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>安昙</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="https://banzheshenghuo.github.io/antan-blog/2020/02/01/Project-to-reconstruct-2/">https://banzheshenghuo.github.io/antan-blog/2020/02/01/Project-to-reconstruct-2/</a></span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>License:</span>
+                        <span>Copyright (c) 2019 <a target="_blank" rel="noopener" href="http://creativecommons.org/licenses/by-nc/4.0/">CC-BY-NC-4.0</a> LICENSE</span>
+                    </p>
+                
+                
+                     <p class="copyright-item">
+                         <span>Slogan:</span>
+                         <span>Do you believe in <strong>DESTINY</strong>?</span>
+                     </p>
+                
+
+            </section>
+         -->
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/antan-blog/source/tag/webpack/"># webpack</a>
+                    
+                        <a href="/antan-blog/source/tag/%E4%BC%98%E5%8C%96/"># 优化</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/antan-blog/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+                <a class="prev" rel="prev" href="/antan-blog/2020/08/12/%E4%BD%BF%E7%94%A8hexo%E5%88%9B%E5%BB%BA%E5%8D%9A%E5%AE%A2%E5%B9%B6%E9%83%A8%E7%BD%B2%E8%87%B3Github/">使用hexo创建博客并部署至Github</a>
+            
+            
+            <a class="next" rel="next" href="/antan-blog/2020/01/21/%E8%80%81%E9%A1%B9%E7%9B%AE%E6%94%B9%E9%80%A0%EF%BC%88%E4%B8%80%EF%BC%89%EF%BC%9A%E4%BD%BF%E7%94%A8webpack%E6%9B%BF%E6%8D%A2roadhog/">老项目改造（一）：使用webpack替换roadhog</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+        </div>
+        <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© 安昙 | Powered by Hexo & Chic</span>
+    </div>
+</footer>
+
+    </div>
+</body>
+</html>
